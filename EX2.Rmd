@@ -1,0 +1,52 @@
+---
+title: "Exercise2"
+author: "Pratyush Pati"
+
+---
+
+```{r exercise2}
+################# 1. Port of Embarkation ##########################
+
+install.packages("tidyr")
+install.packages("dyplyr")
+library(tidyr)
+library(dplyr)
+
+# Make copy of original (removed last blank row from original)
+titanic_clean <- head(titanic_original,-1)
+
+# Replace NA values of emabarked with S
+titanic_clean$embarked[is.na(titanic_clean$embarked)] <- 'S'
+
+####################### 2. Age ###################################
+
+# Find mean age disregarding NA values
+mean_age <- mean(titanic_clean$age, na.rm=TRUE)
+
+#Assign NA values with mean age
+titanic_clean$age[is.na(titanic_clean$age)] <- mean_age
+
+#Question: It's best to use the mean values to replace the NA values because it provides the best way to preserve the statistical structure of the ages. Adding in a minimum, maximum, or other outliers would cause fluctuation in the mean and/or median ages, which would tamper the dataset.
+
+###################### 3. Lifeboat ###############################
+
+# Replace NA values of boat with None
+titanic_clean$boat[is.na(titanic_clean$boat)] <- 'None'
+
+######################## 4. Cabin #############################################
+
+# Make new column has cabin number
+titanic_clean <- titanic_clean %>% mutate(has_cabin_number = '0')
+
+# Assign correct value
+titanic_clean <- within(titanic_clean, {has_cabin_number = ifelse(cabin != '', 1, 0)})
+titanic_clean$has_cabin_number[is.na(titanic_clean$has_cabin_number)] <- 0
+
+# Export to csv files
+write.csv(titanic_clean, file='titanic_clean.csv')
+write.csv(titanic_original, file='titanic_original.csv')
+
+########################################################################################
+
+```
+
